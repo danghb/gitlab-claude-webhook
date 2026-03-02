@@ -132,20 +132,14 @@ The service uses official SDKs (not CLI spawning) for AI execution:
 **Claude Agent SDK** (`@anthropic-ai/claude-agent-sdk`):
 - Uses `query()` function to execute prompts with streaming `SDKMessage` events
 - Configured with `permissionMode: 'bypassPermissions'` for automated execution
-- The SDK spawns the Claude Code binary internally
+- The SDK bundles the Claude Code binary internally (no separate CLI installation needed)
 
 **OpenAI Codex SDK** (`@openai/codex-sdk`):
 - Uses `Codex` class with `startThread()` and `thread.runStreamed()` for streaming events
 - Configured with `approvalPolicy: 'never'` and `sandboxMode: 'danger-full-access'`
-- The SDK spawns the Codex CLI binary internally
+- The SDK includes `@openai/codex` CLI as a dependency (no separate CLI installation needed)
 
-Both SDKs require their respective CLI tools to be installed:
-```bash
-npm install -g @anthropic-ai/claude-code  # Required by claude-agent-sdk
-npm install -g @openai/codex              # Required by codex-sdk
-```
-
-For Docker deployments, both CLIs are installed globally in the container.
+Both SDKs handle their respective CLI binaries internally — no global CLI installation is required.
 
 ## Codex Custom Provider Configuration
 
@@ -185,8 +179,8 @@ Provider name is auto-extracted from URL (e.g., `88code.org` → `88code`).
 
 **Claude Execution Failures**:
 - Check logs for detailed error information and execution context
-- Verify Claude Code CLI is properly installed (`claude --version`) — required by the Agent SDK
-- Ensure ANTHROPIC_AUTH_TOKEN is valid and has sufficient credits
+- Verify ANTHROPIC_AUTH_TOKEN is valid and has sufficient credits
+- Ensure `@anthropic-ai/claude-agent-sdk` is properly installed (the SDK bundles the CLI binary)
 - Review execution logs for authentication or network issues
 
 **Intermittent "Execution error" Messages**:

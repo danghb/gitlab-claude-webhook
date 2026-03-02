@@ -41,12 +41,12 @@ fi
 
 echo "✅ All environment variables are set"
 
-# Check if Claude CLI is available (if running locally)
+# Check if Claude CLI is available (optional - SDK bundles it internally)
 if command -v claude &> /dev/null; then
-    echo "✅ Claude CLI is available"
+    echo "✅ Claude CLI is available in PATH"
     claude --version
 else
-    echo "⚠️  Claude CLI not found in PATH (this is expected if running in Docker without Claude CLI installed)"
+    echo "ℹ️  Claude CLI not found in PATH (this is normal — the SDK bundles the binary internally)"
 fi
 
 echo "🎉 Health check completed successfully!"

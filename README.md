@@ -6,7 +6,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3+-blue.svg)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A robust webhook service that integrates GitLab with AI-powered code assistants (Claude Code CLI and OpenAI Codex), enabling AI-powered code assistance directly from GitLab issues, merge requests, and comments.
+A robust webhook service that integrates GitLab with AI-powered code assistants (Claude Agent SDK and OpenAI Codex SDK), enabling AI-powered code assistance directly from GitLab issues, merge requests, and comments.
 
 ## ✨ Features
 
@@ -24,8 +24,6 @@ A robust webhook service that integrates GitLab with AI-powered code assistants 
 ### Prerequisites
 
 - Node.js 18+ or Docker
-- [Claude Code](https://github.com/anthropics/claude-code) installed (if using Claude provider)
-- [OpenAI Codex](https://github.com/openai/codex) installed (if using Codex provider)
 - GitLab project with webhook access
 - Anthropic API key (for Claude) and/or OpenAI API key (for Codex)
 - GitLab API token
@@ -97,11 +95,11 @@ npm install
 npm run build
 
 # Start the service
-# Note: must run with non-root privilege, due to the requirement for Claude Code's parameter --dangerously-skip-permissions
+# Note: must run with non-root privilege, as required by the AI SDKs' permission bypass mode
 npm start
 
 # For development with hot reload
-# Note: must run with non-root privilege, due to the requirement for Claude Code's parameter --dangerously-skip-permissions
+# Note: must run with non-root privilege, as required by the AI SDKs' permission bypass mode
 npm run dev
 ```
 
@@ -172,7 +170,7 @@ You can provide specific instructions:
 3. **Content Analysis**: Scans for `@claude` mentions in issues/MRs/comments
 4. **Project Preparation**: Clones the GitLab project to a temporary directory
 5. **Branch Management**: Creates timestamp-based branch for Claude changes
-6. **Claude Execution**: Runs Claude Code CLI with the extracted instructions
+6. **AI Execution**: Runs AI via official SDKs with the extracted instructions
 7. **Change Handling**: Commits and pushes any code changes made by Claude
 8. **Smart MR Creation**: Automatically creates merge requests with conventional commit format
 9. **Feedback**: Posts results or errors as comments back to GitLab
@@ -192,7 +190,7 @@ The screenshot shows the complete workflow:
 The service automatically:
 
 - Creates a timestamped branch for the changes
-- Executes the Claude Code CLI with the provided instructions
+- Executes the AI SDK with the provided instructions
 - Commits and pushes any code modifications
 - Generates a professional merge request with conventional commit format
 - Provides a direct link to review and merge the changes
@@ -290,9 +288,9 @@ Your GitLab token needs the following scopes:
 
 ### Common Issues
 
-1. **"Claude Code CLI not found"**
-   - Ensure Claude Code CLI is installed and in PATH
-   - For Docker: Claude Code CLI needs to be available in the container
+1. **"Claude execution failed"**
+   - Ensure `@anthropic-ai/claude-agent-sdk` is properly installed (the SDK bundles the CLI binary)
+   - For Docker: ensure the Docker image is built with all npm dependencies
 
 2. **"Invalid webhook signature"**
    - Verify `WEBHOOK_SECRET` matches GitLab webhook configuration
