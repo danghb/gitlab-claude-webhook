@@ -17,7 +17,7 @@ import { ProjectManager } from './projectManager';
 
 export class StreamingClaudeExecutor {
   private projectManager: ProjectManager;
-  private defaultTimeoutMs = 600000; // 10 minutes
+  private defaultTimeoutMs = 1800000; // 30 minutes
 
   constructor() {
     this.projectManager = new ProjectManager();

@@ -21,7 +21,7 @@ import { ProjectManager } from './projectManager';
 
 export class CodexExecutor {
   private projectManager: ProjectManager;
-  private defaultTimeoutMs = 900000; // 15 minutes
+  private defaultTimeoutMs = 1800000; // 30 minutes
 
   constructor() {
     this.projectManager = new ProjectManager();
