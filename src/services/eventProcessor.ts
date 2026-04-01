@@ -7,6 +7,7 @@ import { StreamingProgressCallback } from '../types/common';
 import { CodexExecutor } from './codexExecutor';
 import { GitLabService } from './gitlabService';
 import { MRGenerator } from '../utils/mrGenerator';
+import { config } from '../utils/config';
 
 export class EventProcessor {
   private projectManager: ProjectManager;
@@ -116,6 +117,36 @@ export class EventProcessor {
           }
         }
         break;
+
+      case 'push':
+        if (event.commits && event.commits.length > 0 && event.checkout_sha) {
+          const defaultProvider = config.ai.defaultProvider;
+          const defaultModel = defaultProvider === 'codex' ? config.openai.defaultModel : config.anthropic.defaultModel;
+          branch = event.ref?.replace('refs/heads/', '') || event.project.default_branch;
+          
+          let diffText = '';
+          try {
+            const diffs = await this.gitlabService.getCommitDiff(event.project.id, event.checkout_sha);
+            if (diffs && diffs.length > 0) {
+              for (const diff of diffs) {
+                 diffText += `\nFile: ${diff.new_path || diff.old_path}\n\`\`\`diff\n${diff.diff}\n\`\`\`\n`;
+              }
+            }
+          } catch (e) {
+            logger.warn('Could not fetch commit diff', e);
+          }
+          
+          context = `Push Event to branch: ${branch}\nCommits: ${event.total_commits_count || event.commits.length}\nLatest commit: ${event.checkout_sha}\n\nChanges for review:\n${diffText}`;
+          
+          return {
+            command: `A new code push has been made to branch ${branch}. Please perform a comprehensive code review of the recently pushed changes represented by the provided diffs. Identify any potential bugs, security vulnerabilities, performance issues, or style improvements, and provide detailed suggestions. Please reply in Chinese (请用中文进行回复).`,
+            context,
+            branch,
+            provider: defaultProvider,
+            model: defaultModel,
+          };
+        }
+        return null;
 
       default:
         return null;
@@ -511,6 +542,16 @@ export class EventProcessor {
           );
         }
         break;
+
+      case 'push':
+        if (event.checkout_sha) {
+          await this.gitlabService.createCommitComment(
+            event.project.id,
+            event.checkout_sha,
+            message
+          );
+        }
+        break;
     }
   }
 
@@ -606,6 +647,11 @@ export class EventProcessor {
             commentId = comment?.id || null;
           }
           break;
+
+        case 'push':
+          // For push events we don't return a commentId to disable progress streaming
+          // This allows us to just post the final review comment at the end without polluting the commit with multiple updates
+          return null;
       }
 
       return commentId;

@@ -84,15 +84,32 @@ export interface GitLabBranch {
   default: boolean;
 }
 
+export interface GitLabCommit {
+  id: string;
+  message: string;
+  timestamp: string;
+  url: string;
+  author: {
+    name: string;
+    email: string;
+  };
+}
+
 export interface GitLabWebhookEvent {
-  object_kind: 'issue' | 'merge_request' | 'note';
+  object_kind: 'issue' | 'merge_request' | 'note' | 'push';
   event_type?: string;
-  user: GitLabUser;
+  user?: GitLabUser;
+  user_id?: number;
+  user_name?: string;
   project: GitLabProject;
-  object_attributes: Record<string, unknown>;
+  object_attributes?: Record<string, unknown>;
   issue?: GitLabIssue;
   merge_request?: GitLabMergeRequest;
   repository?: Record<string, unknown>;
+  ref?: string;
+  checkout_sha?: string;
+  commits?: GitLabCommit[];
+  total_commits_count?: number;
 }
 
 import { AIProvider } from './common';

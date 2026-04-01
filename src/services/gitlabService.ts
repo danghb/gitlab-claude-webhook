@@ -68,6 +68,37 @@ export class GitLabService {
     await this.createMergeRequestComment(projectId, mergeRequestIid, body);
   }
 
+  public async getCommitDiff(projectId: number, sha: string): Promise<any[]> {
+    try {
+      const diffs = await this.gitlab.Commits.diff(projectId, sha);
+      return diffs as any[];
+    } catch (error) {
+      logger.error('Failed to get commit diff:', error);
+      throw new Error(
+        `Failed to get commit diff: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+  }
+
+  public async createCommitComment(projectId: number, sha: string, note: string): Promise<any> {
+    try {
+      const comment = await this.gitlab.Commits.createComment(projectId, sha, note);
+      
+      logger.info('Created comment on commit', {
+        projectId,
+        sha,
+        bodyLength: note.length,
+      });
+
+      return comment;
+    } catch (error) {
+      logger.error('Failed to create commit comment:', error);
+      throw new Error(
+        `Failed to create commit comment: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+  }
+
   public async getProject(projectId: number): Promise<any> {
     try {
       const project = await this.gitlab.Projects.show(projectId);

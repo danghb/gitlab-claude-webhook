@@ -134,7 +134,7 @@ export class StreamingClaudeExecutor {
             type: 'preset',
             preset: 'claude_code',
             append:
-              'You are working in an automated webhook environment. Make code changes directly without asking for permissions. For merge request contexts, use git commands to examine code changes when needed. Focus on implementing requested changes efficiently and provide a clear summary of what was modified.',
+              'You are working in an automated webhook environment. Make code changes directly without asking for permissions. For merge request contexts, use git commands to examine code changes when needed. Focus on implementing requested changes efficiently and provide a clear summary of what was modified. IMPORTANT: You MUST always reply in Chinese (中文). All your responses, analysis, code review comments, and summaries must be written in Chinese.',
           },
           env,
           abortController,
